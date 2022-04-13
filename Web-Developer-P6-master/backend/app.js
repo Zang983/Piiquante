@@ -1,7 +1,7 @@
-const express = require('express');//importation d'express
-const mongoose = require('mongoose'); // apport de mongoose pour la gestion de la bdd
-const SauceRoutes = require('./routes/sauce');//importe les routes pour l'objet stuff
-const userRoutes = require('./routes/user')
+const express = require('express');
+const mongoose = require('mongoose');
+const sauceRoutes = require('./routes/sauce');
+const userRoutes = require('./routes/user');
 
 const app = express();//création de la fonction express permettant de créer le serveur.
 app.use(express.json());//permet d'écouter les requêtes avec un content-type JSON cela le met dans req.body
@@ -22,6 +22,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/sauce', sauceRoutes);
+app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 module.exports = app;
