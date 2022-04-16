@@ -31,8 +31,18 @@ exports.createSauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }))
 };
 
+exports.updateOneSauce = (req, res, next) => {
+    res.status(201).json({ message: "Sauce modifiée !" })
 
-/*Il faut terminé cette partie*/
+}
+
+
+/*
+Plusieurs pistes :
+    - Enchaîné les conditions avec une partie du code qui se répète.
+    - Voir s'il est possible comme dans la partie delete, de préparer des requêtes.
+    - A chaque interraction, reset la présence dans le tableau de présence des like ou dislike quitte à le remettre une nouvelle fois dans la catégorie ou il était déjà présent.
+*/
 exports.likeASauce = (req, res, next) => {
 
     let valeurLike = req.body.like;
@@ -41,30 +51,72 @@ exports.likeASauce = (req, res, next) => {
     Sauce.findOne({ _id: sauceId })
         .then(
             sauce => {
+                let presenceLike=sauce.usersLiked.includes(userId)
+                let presenceDislike =sauce.usersDisliked.includes(userId)
+                console.log(presenceDislike);
+                console.log(valeurLike)
 
-                // statusLikeUser = checkUser(usersLiked,usersDisliked,userId)
-                //Si l'utilisateur n'est pas présent
-                console.clear();
-                console.log(userId)
-                console.log(sauce.usersLiked)
-                console.log(sauce.usersLiked.includes(userId))
-                if (!sauce.usersLiked.includes(userId) && !sauce.usersDisliked.includes(userId)) {
-                    console.log("l'utilisateur n'a jamais jugé la sauce")
-                    if (valeurLike === 1) {
+                if (!presenceLike && !presenceDislike) {
+                    if (valeurLike == 1) {
                         Sauce.updateOne({ _id: sauceId }, {
                             $inc: { likes: 1 },
-                            $pull: { usersLiked: userId }
+                            $push: { usersLiked: userId }
                         })
-                            .then(sauce => console.log(sauce.likes))
+                            .then(() => res.status(201).json({ message: "Vous avez likez cette sauce !" }))
+                            .catch(error => res.status(400).json({ error }))
+                    }
+                    if (valeurLike === -1) {
+                        Sauce.updateOne({ _id: sauceId }, {
+                            $inc: { dislikes: 1 },
+                            $push: { usersDisliked: userId }
+                        })
+                            .then(() => res.status(201).json({ message: "Vous êtes sûr d'avoir bien gouté cette sauce ?" }))
                             .catch(error => res.status(400).json({ error }))
                     }
                 }
+                if (valeurLike ===0)
+                {
+                    if(presenceLike)
+                    {
+                        Sauce.updateOne({_id : sauceId},{
+                            $inc:{likes:-1},
+                            $pull:{usersLiked : userId}
+                        })
+                        .then(()=> res.status(201).json({message : "Vous avez décidé d'être neutre"}))
+                        .catch(error => res.status(400).json({ error }))
+                    }
+                    else
+                    {
+                        Sauce.updateOne({_id : sauceId},{
+                            $inc:{dislikes:-1},
+                            $pull:{usersDisliked : userId}
+                        })
+                        .then(()=> res.status(201).json({message : "Vous avez décidé d'être neutre"}))
+                        .catch(error => res.status(400).json({ error }))    
+                    }
+                }
+
             })
         .catch()
 
 
 }
 exports.deleteSauce = (req, res, next) => {
+
+    // const query = Sauce.deleteOne();
+    // query.where('_id').gte(req.params.id).exec(()=>
+    // {
+    //     if(!query.error)
+    //     {
+    //         res.status(201).json({message:"Sauce supprimée"})
+    //     }
+    //     else
+    //     {
+    //         res.status(500).json({message:"Problème suppression de la BDD"})
+    //     }
+    // });
+    
+
     Sauce.deleteOne({ _id: req.params.id })
         .then(() => res.status(201).json({ message: "Sauce supprimée de la BDD" }))
         .catch(error => res.status(500).json({ message: "Problème suppression de la BDD" }))
