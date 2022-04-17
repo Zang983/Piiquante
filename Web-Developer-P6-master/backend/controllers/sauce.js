@@ -12,10 +12,7 @@ exports.createSauce = (req, res, next) => {
         .then(() => res.status(201).json({ message: "Une nouvelle sauce a été ajoutée." }))
         .catch(error => res.status(400).json({ error }))
 };
-exports.updateOneSauce = (req, res, next) => {
-    res.status(201).json({ message: "Sauce modifiée !" })
 
-}
 exports.likeASauce = (req, res, next) => {
     let valeurLike = req.body.like;
     let userId = req.body.userId
@@ -116,11 +113,23 @@ exports.getAllSauces = (req, res, next) => {
         .catch(error => res.status(400).json({ error: new Error() }))
 };
 exports.updateOneSauce = (req, res, next) => {
-    const sauceObj = req.file ?
+    let sauceObj = req.file ;
+    //     {
+    //         ...JSON.parse(req.body.sauce),
+    //         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    //     } : { ...req.body };
+
+        if(sauceObj!=undefined)
         {
-            ...JSON.parse(req.body.sauce),
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body };
+         sauceObj ={ ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`}
+
+        }
+        else
+        {
+         sauceObj ={ ...req.body } 
+        }
+        
     Sauce.updateOne({ _id: req.params.id },
         {
             ...sauceObj, _id: req.params.id
