@@ -13,13 +13,9 @@ router.delete('/:id',auth, sauceCtrl.deleteSauce);//supprime une sauce
 
 router.put('/:id',auth,multer, sauceCtrl.updateOneSauce);//met à jour une sauce
 
-
 router.get('/',auth, sauceCtrl.getAllSauces);//Récupère toutes les sauces
 
 router.get('/:id',auth, sauceCtrl.getOneSauce);//reçois une sauce unique
-
-
-
 
 
 module.exports = router;
