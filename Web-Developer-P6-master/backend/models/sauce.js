@@ -15,4 +15,4 @@ const sauceSchema = mongoose.Schema({ //créer un schéma de données
     usersDisliked: { type: Array, required: true, default: [] }
 });
 
-module.exports = mongoose.model('Sauce', sauceSchema); //transforme ce modèle en un modèle utilisable
+module.exports = mongoose.model('Sauce', sauceSchema); //transforme ce modèle en un modèle      
