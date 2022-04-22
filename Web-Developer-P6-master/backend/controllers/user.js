@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 exports.signup = (req, res, next) => {
     
     bcrypt.hash(req.body.password, 10)
-        .then(hash => {
+        .then(hash => {//Chiffrement du mot de passe
         const user = new User({
           email: req.body.email,
           password: hash
@@ -32,7 +32,7 @@ exports.signup = (req, res, next) => {
             }
             res.status(200).json({
               userId: user._id,
-              token: jwt.sign(
+              token: jwt.sign(// Création du token à partir d'une chaîne de caractère aléatoire.
                 { userId: user._id },
                 'AuheoO11nNej47Gr,eiUHog@ru::ohga5',
                 { expiresIn: '24h' }
